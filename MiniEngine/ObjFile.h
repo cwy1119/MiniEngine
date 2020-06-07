@@ -46,7 +46,7 @@ public:
 	void setFilename(string filename);
 	bool loadFile();
 	void saveFile();
-	void draw();
+	void draw(GLuint texture_id);
 private:
 	static bool FileExists(const std::string test_filename);
 	static string GetBaseDir(const std::string& filepath);

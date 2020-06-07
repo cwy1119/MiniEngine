@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Obj3D.cpp" />
+    <ClCompile Include="ObjFile.cpp" />
+    <ClCompile Include="trackball.cc">
+      <Filter>库</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationPlayer.cpp" />
+    <ClCompile Include="Manager.cpp" />
+    <ClCompile Include="ScreenShot.cpp" />
+    <ClCompile Include="Light.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Obj3D.h" />
+    <ClInclude Include="ObjFile.h" />
+    <ClInclude Include="stb_image_write.h">
+      <Filter>库</Filter>
+    </ClInclude>
+    <ClInclude Include="tiny_obj_loader.h">
+      <Filter>库</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationPlayer.h" />
+    <ClInclude Include="Manager.h" />
+    <ClInclude Include="Definition.h" />
+    <ClInclude Include="ScreenShot.h" />
+    <ClInclude Include="Light.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="库">
+      <UniqueIdentifier>{f0a8d644-7974-4501-8048-93dd27797ea1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

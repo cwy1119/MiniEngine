@@ -9,7 +9,7 @@
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
-ObjFile::ObjFile(string filename)
+ObjFile::ObjFile(string filename):filename(filename)
 {
 }
 
@@ -24,6 +24,7 @@ void ObjFile::setFilename(string filename) {
 
 bool ObjFile::loadFile()
 {
+	printf("loadFile: %s\n", filename.c_str());
 	if (!FileExists(filename)) {
 		std::cout << "File does not exist!" << std::endl;
 		return false;
@@ -326,7 +327,7 @@ bool ObjFile::loadFile()
 					numTriangles);
 			}
 
-			objects.push_back(Obj3D(vb_id,numTriangles,material_id));
+			objects.push_back(Obj3D(vb_id,numTriangles,material_id,textures,materials));
 		}
 	}
 }
@@ -454,7 +455,7 @@ void ObjFile::normalizeVector(vec3 &v) {
 	}
 }
 
-void ObjFile::draw()
+void ObjFile::draw(GLuint texture_id)
 {
 	glPolygonMode(GL_FRONT, GL_FILL);
 	glPolygonMode(GL_BACK, GL_FILL);
@@ -463,6 +464,6 @@ void ObjFile::draw()
 	glPolygonOffset(1.0, 1.0);
 	int n = objects.size();
 	for (int i = 0; i < n; i++) {
-		objects[i].draw();
+		objects[i].draw(texture_id);
 	}
 }

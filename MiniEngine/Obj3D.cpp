@@ -1,7 +1,7 @@
 #include "Obj3D.h"
 #include <string>
-Obj3D::Obj3D(GLuint vb_id, int numTriangles, size_t material_i):
-	vb_id(vb_id),numTriangles(numTriangles),material_id(material_i)
+Obj3D::Obj3D(GLuint vb_id, int numTriangles, size_t material_i, const std::map<std::string, GLuint>& textures, const std::vector<tinyobj::material_t>& materials):
+	vb_id(vb_id),numTriangles(numTriangles),material_id(material_i),textures(textures),materials(materials)
 {
 }
 
@@ -10,7 +10,7 @@ Obj3D::~Obj3D()
 {
 }
 
-void Obj3D::draw()
+void Obj3D::draw(GLuint texture_id)
 {
 	
 	if (vb_id < 1) {
@@ -23,12 +23,17 @@ void Obj3D::draw()
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	glBindTexture(GL_TEXTURE_2D, 0);
-	/*if ((o.material_id < materials.size())) {
-		std::string diffuse_texname = materials[o.material_id].diffuse_texname;
-		if (textures.find(diffuse_texname) != textures.end()) {
-			glBindTexture(GL_TEXTURE_2D, textures[diffuse_texname]);
+	if (texture_id == -1) {
+		if ((material_id < materials.size())) {
+			std::string diffuse_texname = materials[material_id].diffuse_texname;
+			if (textures.find(diffuse_texname) != textures.end()) {
+				glBindTexture(GL_TEXTURE_2D, textures.at(diffuse_texname));
+			}
 		}
+		else glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	else glBindTexture(GL_TEXTURE_2D, texture_id);
+	/*
 	}*/
 	glVertexPointer(3, GL_FLOAT, stride, (const void*)0);
 	glNormalPointer(GL_FLOAT, stride, (const void*)(sizeof(float) * 3));

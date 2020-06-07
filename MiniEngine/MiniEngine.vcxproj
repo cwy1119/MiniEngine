@@ -259,6 +259,7 @@
       <AdditionalIncludeDirectories>.;..\..;C:\Users\asus\Desktop\tinyobjloader\examples\viewer\library\Includes\GLFW;C:\Users\asus\Desktop\tinyobjloader\examples\viewer\library\Includes\GL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -269,17 +270,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationPlayer.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Definition.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="Manager.h" />
     <ClInclude Include="Obj3D.h" />
     <ClInclude Include="ObjFile.h" />
+    <ClInclude Include="ScreenShot.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationPlayer.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Manager.cpp" />
     <ClCompile Include="Obj3D.cpp" />
     <ClCompile Include="ObjFile.cpp" />
+    <ClCompile Include="ScreenShot.cpp" />
     <ClCompile Include="trackball.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

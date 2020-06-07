@@ -18,6 +18,11 @@
 #include "ObjFile.h"
 #include "Camera.h"
 #include "trackball.h"
+#include "AnimationPlayer.h"
+#include "Manager.h"
+#include "ScreenShot.h"
+#include "Light.h"
+
 //结构声明
 typedef enum{ViewMode,MergeMode,AnimationMode}RunMode;
 
@@ -28,7 +33,7 @@ static void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, 
 static void clickFunc(GLFWwindow* window, int button, int action, int mods);
 static void motionFunc(GLFWwindow* window, double mouse_x, double mouse_y);			//回调函数, 各模块根据需要添加代码
 
-static void screenShot(std::string filename, int x, int y, int width, int height); //截图函数, 由lxy负责实现
+
 
 
 static void Init();
@@ -38,9 +43,11 @@ RunMode runMode;
 int w_width = 768;
 int w_height = 768;
 GLFWwindow* window;
-ObjFile objFile("");
-Camera camera;
 
+Camera camera;
+Light light;
+AnimationPlayer* ap;
+Manager* manager;
 
 static void Init()
 {
@@ -55,7 +62,8 @@ int main(int argc, char** argv) {
 	else if(strcmp(argv[1],"-v") == 0){
 		runMode = ViewMode;
 		//todo, obj显示模块,由大家负责一起实现
-		objFile.setFilename(argv[2]);
+		manager = new Manager();
+		
 	}
 	else if (strcmp(argv[1], "-m") == 0){
 		runMode = MergeMode;
@@ -64,7 +72,7 @@ int main(int argc, char** argv) {
 	else if (strcmp(argv[1], "-a") == 0){
 		runMode = AnimationMode;
 		//todo, 动画播放模块, 由yyn负责实现, 用于一系列obj文件的读取和播放
-
+		ap = new AnimationPlayer(argv[2], atoi(argv[3]), atoi(argv[4]));
 	}
 	else {
 		std::cout << "Unknown argument: " << argv[1] << std::endl;
@@ -103,8 +111,11 @@ int main(int argc, char** argv) {
 
 	//To do: 循环前的初始化代码放这
 	reshapeFunc(window, w_width, w_height);
-	objFile.loadFile();
-
+	if (runMode == ViewMode) {
+		manager->appendObjFile(argv[2]);
+	}else if (runMode == AnimationMode) {
+		ap->load();
+	}
 	while (glfwWindowShouldClose(window) == GL_FALSE) {
 		//To do:循环内的初始化代码放这
 		glfwPollEvents();
@@ -122,7 +133,19 @@ int main(int argc, char** argv) {
 		build_rotmatrix(mat, camera.curr_quat);
 		glMultMatrixf(&mat[0][0]);
 
-		objFile.draw();
+		light.init();
+
+		if (runMode == ViewMode) {
+			manager->loop();
+			manager->draw();
+		}
+		else if (runMode == AnimationMode) {
+			while (glfwWindowShouldClose(window) == GL_FALSE) {
+				bool ret = ap->flush(glfwGetTime());
+				if(ret) break;
+				
+			}
+		}
 		glfwSwapBuffers(window);
 	}
 	glfwTerminate();
@@ -145,7 +168,15 @@ static void reshapeFunc(GLFWwindow* window, int w, int h) {
 
 static void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	//灯光监听部分
+	light.keyboardFunc(window, key, scancode, action, mods);
 
+	if (runMode == ViewMode) manager->keyboardFunc(window, key, scancode, action, mods);
+
+	//截图部分
+	if (action == GLFW_PRESS && key == GLFW_KEY_X) {
+		ScreenShot("1.bmp", w_width, w_height);
+	}
 }
 
 static void clickFunc(GLFWwindow* window, int button, int action, int mods) {
@@ -180,6 +211,7 @@ static void clickFunc(GLFWwindow* window, int button, int action, int mods) {
 	}
 
 	//todo: 各模块的代码放这
+	
 }
 
 
