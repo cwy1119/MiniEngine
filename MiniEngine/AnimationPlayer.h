@@ -1,7 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
+
 #include "ObjFile.h"
+#include <GLFW/glfw3.h>
 using std::string;
 class AnimationPlayer
 {
@@ -21,4 +23,5 @@ public:
 	~AnimationPlayer();
 	void load();
 	bool flush(double nowTime);
+	void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mods);
 };

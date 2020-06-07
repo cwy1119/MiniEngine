@@ -172,11 +172,13 @@ static void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, 
 	light.keyboardFunc(window, key, scancode, action, mods);
 
 	if (runMode == ViewMode) manager->keyboardFunc(window, key, scancode, action, mods);
+	else if(runMode == AnimationMode) ap->keyboardFunc(window, key, scancode, action, mods);
 
 	//½ØÍ¼²¿·Ö
 	if (action == GLFW_PRESS && key == GLFW_KEY_X) {
 		ScreenShot("1.bmp", w_width, w_height);
 	}
+
 }
 
 static void clickFunc(GLFWwindow* window, int button, int action, int mods) {

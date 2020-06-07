@@ -46,3 +46,28 @@ bool AnimationPlayer::flush(double nowTime)
 	}
 	return ret;
 }
+
+void AnimationPlayer::keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (action == GLFW_PRESS) {
+		switch (key) {
+		case GLFW_KEY_SPACE: {
+			isPause = !isPause;
+			break;
+		}
+		case GLFW_KEY_DOWN:{
+			if (FPS > 20)
+			{
+				FPS -= 10;
+			}
+			break;
+		}
+		case GLFW_KEY_UP: {
+			if (FPS < 200)
+			{
+				FPS += 10;
+			}
+			break;
+		}
+		}
+	}
+}
