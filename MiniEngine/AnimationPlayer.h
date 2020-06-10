@@ -18,10 +18,13 @@ private:
 	double nowTime, lastTime, deltaTime;
 	bool isPause;
 	double FPS;
+
+	double fscale;
 public:
 	AnimationPlayer(string path,int start,int end);
 	~AnimationPlayer();
 	void load();
 	bool flush(double nowTime);
 	void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void scrollFunc(GLFWwindow* window, double x, double y);
 };

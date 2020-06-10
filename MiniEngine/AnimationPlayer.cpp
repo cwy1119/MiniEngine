@@ -1,6 +1,7 @@
 #include "AnimationPlayer.h"
+#include <cmath>
 AnimationPlayer::AnimationPlayer(string path, int start, int end)
-	:path(path),start(start),end(end),lastTime(0),isPause(false),next(0)
+	:path(path),start(start),end(end),lastTime(0),isPause(false),next(0),fscale(1.0)
 {
 	FPS = 200.0;
 	std::string fileName = "";
@@ -34,8 +35,9 @@ bool AnimationPlayer::flush(double nowTime)
 	double diff = nowTime - lastTime;
 	if (diff > 1.0 / FPS) {
 		lastTime = nowTime;
-		a_objFile[next].draw(-1,-1);
-		if (!isPause&&++next >= a_objFile.size()-2)
+		glScalef(fscale, fscale, fscale);
+		a_objFile[next].draw(0,1);
+		if (!isPause&&++next >= a_objFile.size())
 		{
 			next = 0;
 		}
@@ -70,4 +72,9 @@ void AnimationPlayer::keyboardFunc(GLFWwindow* window, int key, int scancode, in
 		}
 		}
 	}
+}
+
+void AnimationPlayer::scrollFunc(GLFWwindow* window, double x, double y)
+{
+	fscale = fscale * pow(0.8, y);
 }

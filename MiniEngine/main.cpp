@@ -15,9 +15,8 @@
 #pragma warning(disable : 4996)
 
 
-#include "ObjFile.h"
+
 #include "Camera.h"
-#include "trackball.h"
 #include "AnimationPlayer.h"
 #include "Manager.h"
 #include "ScreenShot.h"
@@ -32,7 +31,7 @@ static void reshapeFunc(GLFWwindow* window, int w, int h);
 static void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mods);
 static void clickFunc(GLFWwindow* window, int button, int action, int mods);
 static void motionFunc(GLFWwindow* window, double mouse_x, double mouse_y);			//回调函数, 各模块根据需要添加代码
-
+static void scrollFunc(GLFWwindow*, double, double);
 
 
 
@@ -44,14 +43,14 @@ int w_width = 768;
 int w_height = 768;
 GLFWwindow* window;
 
-Camera camera;
+Camera camera(w_width,w_height);
 Light light;
 AnimationPlayer* ap;
 Manager* manager;
 
 static void Init()
 {
-	trackball(camera.curr_quat, 0, 0, 0, 0);
+	
 }
 
 int main(int argc, char** argv) {
@@ -101,7 +100,7 @@ int main(int argc, char** argv) {
 	glfwSetKeyCallback(window, keyboardFunc);
 	glfwSetMouseButtonCallback(window, clickFunc);
 	glfwSetCursorPosCallback(window, motionFunc);
-
+	glfwSetScrollCallback(window, scrollFunc);
 	glewExperimental = true;
 	if (glewInit() != GLEW_OK) {
 		std::cerr << "Failed to initialize GLEW." << std::endl;
@@ -127,11 +126,8 @@ int main(int argc, char** argv) {
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		GLfloat mat[4][4];
-		gluLookAt(camera.eye[0], camera.eye[1], camera.eye[2], camera.lookat[0], camera.lookat[1], camera.lookat[2], camera.up[0],
-			camera.up[1], camera.up[2]);
-		build_rotmatrix(mat, camera.curr_quat);
-		glMultMatrixf(&mat[0][0]);
+		
+		camera.setLookAt();
 
 		light.init();
 
@@ -186,31 +182,7 @@ static void clickFunc(GLFWwindow* window, int button, int action, int mods) {
 	(void)mods;
 
 	//摄像头监控部分
-	if (button == GLFW_MOUSE_BUTTON_LEFT) {
-		if (action == GLFW_PRESS) {
-			camera.mouseLeftPressed = true;
-			trackball(camera.prev_quat, 0.0, 0.0, 0.0, 0.0);
-		}
-		else if (action == GLFW_RELEASE) {
-			camera.mouseLeftPressed = false;
-		}
-	}
-	if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-		if (action == GLFW_PRESS) {
-			camera.mouseRightPressed = true;
-		}
-		else if (action == GLFW_RELEASE) {
-			camera.mouseRightPressed = false;
-		}
-	}
-	if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
-		if (action == GLFW_PRESS) {
-			camera.mouseMiddlePressed = true;
-		}
-		else if (action == GLFW_RELEASE) {
-			camera.mouseMiddlePressed = false;
-		}
-	}
+	camera.clickFunc(window, button, action, mods);
 
 	//todo: 各模块的代码放这
 	
@@ -219,39 +191,23 @@ static void clickFunc(GLFWwindow* window, int button, int action, int mods) {
 
 static void motionFunc(GLFWwindow* window, double mouse_x, double mouse_y) {
 	(void)window;
-	float rotScale = 1.0f;
-	float transScale = 2.0f;
+	
 
 	//摄像头监控部分
-	if (camera.mouseLeftPressed) {
-		
-			trackball(camera.prev_quat, rotScale * (2.0f * camera.prevMouseX - w_width) / (float)w_width,
-				rotScale * (w_height - 2.0f * camera.prevMouseY) / (float)w_height,
-				rotScale * (2.0f * mouse_x - w_width) / (float)w_width,
-				rotScale * (w_height - 2.0f * mouse_y) / (float)w_height);
-
-			add_quats(camera.prev_quat, camera.curr_quat, camera.curr_quat);
-		
-
-	}
-	else if (camera.mouseMiddlePressed) {
-		camera.eye[0] -= transScale * (mouse_x - camera.prevMouseX) / (float)w_width;
-		camera.lookat[0] -= transScale * (mouse_x - camera.prevMouseX) / (float)w_width;
-		camera.eye[1] += transScale * (mouse_y - camera.prevMouseY) / (float)w_height;
-		camera.lookat[1] += transScale * (mouse_y - camera.prevMouseY) / (float)w_height;
-	}
-	else if (camera.mouseRightPressed) {
-		camera.eye[2] += transScale * (mouse_y - camera.prevMouseY) / (float)w_height;
-		camera.lookat[2] += transScale * (mouse_y - camera.prevMouseY) / (float)w_height;
-	}
-
-	// Update mouse point
-	camera.prevMouseX = mouse_x;
-	camera.prevMouseY = mouse_y;
+	camera.motionFunc(window, mouse_x, mouse_y);
 
 	//todo: 各模块的代码放这
 }
 
 static void screenShot(std::string filename, int x, int y, int width, int height) {
 	//lxy实现这一部分
+}
+
+static void scrollFunc(GLFWwindow* window, double x, double y) {
+	if (runMode == ViewMode) {
+
+	}
+	else if (runMode == AnimationMode) {
+		ap->scrollFunc(window, x, y);
+	}
 }
