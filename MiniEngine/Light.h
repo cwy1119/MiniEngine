@@ -7,7 +7,7 @@ private:
 	bool bLight = false;
 	GLfloat AmbientLight[4] = { 1.0f,1.0f,1.0f,1.0f };
 	GLfloat LightPosition[4] = { 1.0f,1.0f,1.0f,1.0f };
-	GLfloat DiffuseLight[4] = { 1.0f,1.0f,1.0f,1.0f };
+	GLfloat DiffuseLight[4] = { 0.0f,0.0f,1.0f,1.0f };
 	GLfloat SpecularLight[4] = { 1.0f,1.0f,1.0f,1.0f };
 public:
 	Light();

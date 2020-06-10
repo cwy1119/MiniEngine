@@ -5,7 +5,7 @@
 #include "stb_image.h"
 
 Manager::Manager()
-	:mtlfile_id(-1)
+	:texture_index(0),material_index(0)
 {
 }
 
@@ -29,8 +29,10 @@ void Manager::draw()
 
 	for (int i = 0; i < objFiles.size(); i++)
 	{
-		if(mtlfile_id == -1) objFiles[i].draw(-1);
-		else objFiles[i].draw(texture_ids[mtlfile_id]);
+		GLuint id;
+		if (texture_index == 0) id = 0;
+		else id = texture_ids[texture_index-1];
+		objFiles[i].draw(id,material_index);
 	}
 }
 
@@ -78,12 +80,20 @@ void Manager::keyboardFunc(GLFWwindow* window, int key, int scancode, int action
 {
 	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 		if (key == GLFW_KEY_M) {
-			mtlfile_id++;
-			printf("mtlfile: %d\n", mtlfile_id);
-			if (mtlfile_id >= MTL_N) {
+			texture_index++;
+			if (texture_index >= MTL_N) {
 				//目前内置7张纹理贴图 可增加
-				mtlfile_id = -1;
+				texture_index = 0;
 			}
+			printf("mtlfile: %d\n", texture_index);
+		}
+		if (key == GLFW_KEY_RIGHT) {
+			material_index++;
+			
+			if (material_index >= MER_N) {
+				material_index = 0;
+			}
+			printf("material_id: %d\n", material_index);
 		}
 	}
 

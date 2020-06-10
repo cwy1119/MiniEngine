@@ -73,6 +73,7 @@ void Light::keyboardFunc(GLFWwindow* window, int key, int scancode, int action, 
 
 void Light::init()
 {
+	glEnable(GL_LIGHTING);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, AmbientLight);
 	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, DiffuseLight);

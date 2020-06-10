@@ -455,7 +455,7 @@ void ObjFile::normalizeVector(vec3 &v) {
 	}
 }
 
-void ObjFile::draw(GLuint texture_id)
+void ObjFile::draw(GLuint texture_id, GLuint material_index)
 {
 	glPolygonMode(GL_FRONT, GL_FILL);
 	glPolygonMode(GL_BACK, GL_FILL);
@@ -464,6 +464,6 @@ void ObjFile::draw(GLuint texture_id)
 	glPolygonOffset(1.0, 1.0);
 	int n = objects.size();
 	for (int i = 0; i < n; i++) {
-		objects[i].draw(texture_id);
+		objects[i].draw(texture_id,material_index);
 	}
 }

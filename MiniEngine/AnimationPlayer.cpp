@@ -34,7 +34,7 @@ bool AnimationPlayer::flush(double nowTime)
 	double diff = nowTime - lastTime;
 	if (diff > 1.0 / FPS) {
 		lastTime = nowTime;
-		a_objFile[next].draw(-1);
+		a_objFile[next].draw(-1,-1);
 		if (!isPause&&++next >= a_objFile.size()-2)
 		{
 			next = 0;

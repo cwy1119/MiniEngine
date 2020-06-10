@@ -146,7 +146,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>bin\x32\Debug\</OutDir>
     <IntDir>obj\x32\Debug\</IntDir>
-    <TargetName>objview</TargetName>
+    <TargetName>minEngine</TargetName>
     <TargetExt>.exe</TargetExt>
     <IncludePath>.\library\Includes;$(IncludePath)</IncludePath>
     <LibraryPath>.\library\Libs;$(LibraryPath)</LibraryPath>
