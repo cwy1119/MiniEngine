@@ -3,6 +3,7 @@
 Obj3D::Obj3D(GLuint vb_id, int numTriangles, size_t material_i, const std::map<std::string, GLuint>& textures, const std::vector<tinyobj::material_t>& materials):
 	vb_id(vb_id),numTriangles(numTriangles),material_id(material_i),textures(textures),materials(materials)
 {
+	
 }
 
 

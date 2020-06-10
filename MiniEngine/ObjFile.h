@@ -33,15 +33,20 @@ namespace  // Local utility functions
 	};
 }
 
+typedef enum {MODEL_BALL,MODEL_CUBE,MODEL_PRISM}MODEL_TYPE;
+
 class ObjFile
 {
 public:
 	std::vector<Obj3D> objects;
 	string filename;
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
 	std::map<std::string, GLuint> textures;
 	std::vector<tinyobj::material_t> materials;
-
+	ObjFile(const ObjFile & c);
 	ObjFile(string filename);
+	ObjFile(MODEL_TYPE type,int n);
 	~ObjFile();
 	void setFilename(string filename);
 	bool loadFile();
@@ -54,5 +59,11 @@ private:
 	void computeSmoothingNormals(const tinyobj::attrib_t& attrib, const tinyobj::shape_t& shape, std::map<int, vec3>& smoothVertexNormals);
 	static void CalcNormal(float N[3], float v0[3], float v1[3], float v2[3]);
 	void normalizeVector(vec3 &v);
+	void analyzeData();
+	void addVertice(float x, float y, float z);
+	void addVertice(vec3 vetex);
+	void addNormal(float x, float y, float z);
+	void addtexcoord(float x, float y);
+	void addVertIndex(tinyobj::shape_t& shape, int index1, int index2, int index3);
 };
 

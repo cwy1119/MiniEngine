@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
 	else if(strcmp(argv[1],"-v") == 0){
 		runMode = ViewMode;
 		//todo, obj显示模块,由大家负责一起实现
-		manager = new Manager();
+		
 		
 	}
 	else if (strcmp(argv[1], "-m") == 0){
@@ -111,7 +111,9 @@ int main(int argc, char** argv) {
 	//To do: 循环前的初始化代码放这
 	reshapeFunc(window, w_width, w_height);
 	if (runMode == ViewMode) {
-		manager->appendObjFile(argv[2]);
+		manager = new Manager();
+		//manager->appendObjFile(argv[2]);
+		manager->appendObjFile(MODEL_CUBE, 5);
 	}else if (runMode == AnimationMode) {
 		ap->load();
 	}

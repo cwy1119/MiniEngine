@@ -1,18 +1,88 @@
 #include "ObjFile.h"
 #include <cstdio>
+#include <cmath>
 #include <iostream>
 
-
+#define PI 3.1415926
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
+ObjFile::ObjFile(const ObjFile & c)
+{
+	this->shapes = c.shapes;
+}
 ObjFile::ObjFile(string filename):filename(filename)
 {
 }
 
+ObjFile::ObjFile(MODEL_TYPE type, int n)
+{
+	materials.resize(0);
+	tinyobj::shape_t newShape;
+	newShape.name = "cube";
+	int start = attrib.vertices.size() / 3;
+	int cur_num = start;
+	//newShape.mesh.material_ids.push_back(-1);
+	//newShape.mesh.num_face_vertices = 3;
+	for (int i = 0; i < n; i++) {
+		vec3 vetex_bottom;
+		vec3 vetex_top;
+		vetex_bottom.v[0] = cos(2.0*PI*i / n);
+		vetex_bottom.v[1] = -0.5;
+		vetex_bottom.v[2] = sin(2.0*PI*i / n);
+
+		vetex_top.v[0] = cos(2.0*PI*i / n);
+		vetex_top.v[1] = 0.5;
+		vetex_top.v[2] = sin(2.0*PI*i / n);
+		if (i != 0 && i != n - 1) {
+			this->addVertice(vetex_bottom);
+			this->addVertIndex(newShape, cur_num - 2, cur_num - 1, cur_num);
+			if (i >= 2) this->addVertIndex(newShape, start, cur_num - 2, cur_num);
+			cur_num++;
+
+			this->addVertice(vetex_top);
+			
+			this->addVertIndex(newShape, cur_num - 2, cur_num - 1, cur_num);
+			if (i >= 2) this->addVertIndex(newShape, start+1, cur_num - 2, cur_num);
+			cur_num++;
+		}
+		else if (i == 0) {
+			this->addVertice(vetex_bottom);
+			cur_num++;
+			this->addVertice(vetex_top);
+			cur_num++;
+		}
+		else {
+			this->addVertice(vetex_bottom);
+			
+			this->addVertIndex(newShape, cur_num - 2, cur_num - 1, cur_num);
+			this->addVertIndex(newShape, start, start + 1, cur_num);
+			cur_num++;
+
+			this->addVertice(vetex_top);
+			this->addVertIndex(newShape, cur_num - 2, cur_num - 1, cur_num);
+			if (i >= 2) this->addVertIndex(newShape, start+1, cur_num - 1, cur_num);
+			cur_num++;
+		}
+	}
+	this->shapes.push_back(newShape);
+	analyzeData();
+}
+
+void ObjFile::addVertIndex(tinyobj::shape_t& shape, int index1, int index2, int index3)
+{
+	tinyobj::index_t v1; v1.vertex_index = index1; v1.normal_index = 0; v1.texcoord_index = 0;
+	tinyobj::index_t v2; v2.vertex_index = index2; v2.normal_index = 0; v2.texcoord_index = 0;
+	tinyobj::index_t v3; v3.vertex_index = index3; v3.normal_index = 0; v3.texcoord_index = 0;
+	shape.mesh.indices.push_back(v1);
+	shape.mesh.indices.push_back(v2);
+	shape.mesh.indices.push_back(v3);
+	shape.mesh.material_ids.push_back(0);
+	shape.mesh.num_face_vertices.push_back(3);
+}
 
 ObjFile::~ObjFile()
 {
@@ -30,8 +100,7 @@ bool ObjFile::loadFile()
 		return false;
 	}
 
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shapes;
+	
 	
 
 	std::string base_dir = GetBaseDir(filename);
@@ -54,7 +123,13 @@ bool ObjFile::loadFile()
 		std::cerr << "Failed to load " << filename << std::endl;
 		return false;
 	}
+	analyzeData();
+	
+}
 
+void ObjFile::analyzeData()
+{
+	std::string base_dir = GetBaseDir(filename);
 	materials.push_back(tinyobj::material_t());
 
 	// 加载不同的纹理
@@ -117,7 +192,7 @@ bool ObjFile::loadFile()
 	{
 		for (size_t s = 0; s < shapes.size(); s++) {
 			//DrawObject o;
-			
+
 			std::vector<float> buffer;  // pos(3float), normal(3float), color(3float)
 
 			// Check for smoothing group and compute smoothing normals
@@ -200,12 +275,12 @@ bool ObjFile::loadFile()
 					v[0][k] = attrib.vertices[3 * f0 + k];
 					v[1][k] = attrib.vertices[3 * f1 + k];
 					v[2][k] = attrib.vertices[3 * f2 + k];
-				/*	bmin[k] = std::min(v[0][k], bmin[k]);
-					bmin[k] = std::min(v[1][k], bmin[k]);
-					bmin[k] = std::min(v[2][k], bmin[k]);
-					bmax[k] = std::max(v[0][k], bmax[k]);
-					bmax[k] = std::max(v[1][k], bmax[k]);
-					bmax[k] = std::max(v[2][k], bmax[k]); */
+					/*	bmin[k] = std::min(v[0][k], bmin[k]);
+						bmin[k] = std::min(v[1][k], bmin[k]);
+						bmin[k] = std::min(v[2][k], bmin[k]);
+						bmax[k] = std::max(v[0][k], bmax[k]);
+						bmax[k] = std::max(v[1][k], bmax[k]);
+						bmax[k] = std::max(v[2][k], bmax[k]); */
 				}
 
 				float n[3][3];
@@ -327,7 +402,7 @@ bool ObjFile::loadFile()
 					numTriangles);
 			}
 
-			objects.push_back(Obj3D(vb_id,numTriangles,material_id,textures,materials));
+			objects.push_back(Obj3D(vb_id, numTriangles, material_id, textures, materials));
 		}
 	}
 }
@@ -467,3 +542,27 @@ void ObjFile::draw(GLuint texture_id, GLuint material_index)
 		objects[i].draw(texture_id,material_index);
 	}
 }
+
+void ObjFile::addNormal(float x, float y, float z)
+{
+	this->attrib.normals.push_back(x);
+	this->attrib.normals.push_back(y);
+	this->attrib.normals.push_back(z);
+}
+
+void ObjFile::addVertice(vec3 vetex)
+{
+	this->attrib.vertices.push_back(vetex.v[0]);
+	this->attrib.vertices.push_back(vetex.v[1]);
+	this->attrib.vertices.push_back(vetex.v[2]);
+
+}
+
+void ObjFile::addtexcoord(float x, float y)
+{
+	this->attrib.texcoords.push_back(x);
+	this->attrib.texcoords.push_back(y);
+}
+
+
+

@@ -9,8 +9,7 @@ using std::string;
 class Manager
 {
 private:
-	std::vector<ObjFile> objFiles;
-	//std::vector<Obj3D> obj3Ds;
+	std::vector<ObjFile*> objFiles;
 	GLuint texture_index; //纹理编号 0为自带贴图
 	GLuint material_index; //材质编号 0为自带贴图
 	GLuint texture_ids[MTL_N];
@@ -24,6 +23,7 @@ public:
 	Manager();
 	~Manager();
 	void appendObjFile(string filename);
+	void appendObjFile(MODEL_TYPE type,int n);
 	void draw();
 	void initDefaultTexture();
 	void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mods);

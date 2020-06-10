@@ -7,18 +7,28 @@
 Manager::Manager()
 	:texture_index(0),material_index(0)
 {
+	initDefaultTexture();
 }
 
 
 Manager::~Manager()
 {
+	for (int i = 0; i < objFiles.size(); i++)
+	{
+		delete objFiles[i];
+	}
 }
 
 void Manager::appendObjFile(string name)
 {
-	initDefaultTexture();
-	this->objFiles.push_back(ObjFile(name));
-	objFiles.at(objFiles.size() - 1).loadFile();
+	
+	this->objFiles.push_back(new ObjFile(name));
+	objFiles.at(objFiles.size() - 1)->loadFile();
+}
+
+void Manager::appendObjFile(MODEL_TYPE type, int n)
+{
+	this->objFiles.push_back(new ObjFile(type, n));
 }
 
 void Manager::draw()
@@ -32,7 +42,7 @@ void Manager::draw()
 		GLuint id;
 		if (texture_index == 0) id = 0;
 		else id = texture_ids[texture_index-1];
-		objFiles[i].draw(id,material_index);
+		objFiles[i]->draw(id,material_index);
 	}
 }
 
