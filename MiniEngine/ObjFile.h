@@ -33,7 +33,7 @@ namespace  // Local utility functions
 	};
 }
 
-typedef enum {MODEL_BALL,MODEL_CUBE,MODEL_PRISM}MODEL_TYPE;
+typedef enum {MODEL_BALL,MODEL_CUBE,MODEL_PRISM,MODEL_PYRAMID}MODEL_TYPE;
 
 class ObjFile
 {
@@ -46,7 +46,7 @@ public:
 	std::vector<tinyobj::material_t> materials;
 	ObjFile(const ObjFile & c);
 	ObjFile(string filename);
-	ObjFile(MODEL_TYPE type,int n);
+	ObjFile(MODEL_TYPE type,int n = 4);
 	~ObjFile();
 	void setFilename(string filename);
 	bool loadFile();

@@ -113,7 +113,7 @@ int main(int argc, char** argv) {
 	if (runMode == ViewMode) {
 		manager = new Manager();
 		//manager->appendObjFile(argv[2]);
-		manager->appendObjFile(MODEL_CUBE, 5);
+		manager->appendObjFile(MODEL_PYRAMID, 5);
 	}else if (runMode == AnimationMode) {
 		ap->load();
 	}

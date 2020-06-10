@@ -25,49 +25,66 @@ ObjFile::ObjFile(MODEL_TYPE type, int n)
 	newShape.name = "cube";
 	int start = attrib.vertices.size() / 3;
 	int cur_num = start;
-	//newShape.mesh.material_ids.push_back(-1);
-	//newShape.mesh.num_face_vertices = 3;
-	for (int i = 0; i < n; i++) {
-		vec3 vetex_bottom;
-		vec3 vetex_top;
-		vetex_bottom.v[0] = cos(2.0*PI*i / n);
-		vetex_bottom.v[1] = -0.5;
-		vetex_bottom.v[2] = sin(2.0*PI*i / n);
+	if (type == MODEL_CUBE) {
+		//创建一个n棱柱,默认高度为1
+		for (int i = 0; i < n; i++) {
+			vec3 vetex_bottom;
+			vec3 vetex_top;
+			vetex_bottom.v[0] = cos(2.0*PI*i / n);
+			vetex_bottom.v[1] = -0.5;
+			vetex_bottom.v[2] = sin(2.0*PI*i / n);
 
-		vetex_top.v[0] = cos(2.0*PI*i / n);
-		vetex_top.v[1] = 0.5;
-		vetex_top.v[2] = sin(2.0*PI*i / n);
-		if (i != 0 && i != n - 1) {
-			this->addVertice(vetex_bottom);
-			this->addVertIndex(newShape, cur_num - 2, cur_num - 1, cur_num);
-			if (i >= 2) this->addVertIndex(newShape, start, cur_num - 2, cur_num);
-			cur_num++;
+			vetex_top.v[0] = cos(2.0*PI*i / n);
+			vetex_top.v[1] = 0.5;
+			vetex_top.v[2] = sin(2.0*PI*i / n);
+			if (i != 0) {
+				this->addVertice(vetex_bottom);
+				this->addVertIndex(newShape, cur_num - 2, cur_num - 1, cur_num);
+				if (i >= 2) this->addVertIndex(newShape, start, cur_num - 2, cur_num);
+				if (i == n - 1) this->addVertIndex(newShape, cur_num, start, start + 1);
+				cur_num++;
 
-			this->addVertice(vetex_top);
-			
-			this->addVertIndex(newShape, cur_num - 2, cur_num - 1, cur_num);
-			if (i >= 2) this->addVertIndex(newShape, start+1, cur_num - 2, cur_num);
-			cur_num++;
-		}
-		else if (i == 0) {
-			this->addVertice(vetex_bottom);
-			cur_num++;
-			this->addVertice(vetex_top);
-			cur_num++;
-		}
-		else {
-			this->addVertice(vetex_bottom);
-			
-			this->addVertIndex(newShape, cur_num - 2, cur_num - 1, cur_num);
-			this->addVertIndex(newShape, start, start + 1, cur_num);
-			cur_num++;
+				this->addVertice(vetex_top);
 
-			this->addVertice(vetex_top);
-			this->addVertIndex(newShape, cur_num - 2, cur_num - 1, cur_num);
-			if (i >= 2) this->addVertIndex(newShape, start+1, cur_num - 1, cur_num);
-			cur_num++;
+				this->addVertIndex(newShape, cur_num - 2, cur_num - 1, cur_num);
+				if (i >= 2) this->addVertIndex(newShape, start + 1, cur_num - 2, cur_num);
+				if (i == n - 1) this->addVertIndex(newShape, cur_num, start + 1, cur_num - 1);
+				cur_num++;
+			}
+			else if (i == 0) {
+				this->addVertice(vetex_bottom);
+				cur_num++;
+				this->addVertice(vetex_top);
+				cur_num++;
+			}
 		}
 	}
+	else if (type == MODEL_PYRAMID) {
+		//创建一个n棱锥,默认高度为1
+		vec3 top;
+		top.v[0] = 0; top.v[1] = 1; top.v[2] = 0;
+		this->addVertice(top);
+		cur_num++;
+		for (int i = 0; i < n; i++)
+		{
+			vec3 ve;
+			ve.v[0] = cos(2.0*PI*i / n);
+			ve.v[1] = 0;
+			ve.v[2] = sin(2.0*PI*i / n);
+			if (i != 0) {
+				this->addVertice(ve);
+				this->addVertIndex(newShape,start, cur_num - 1, cur_num);
+				if (i >= 2) this->addVertIndex(newShape, start+1, cur_num - 1, cur_num);
+				if (i == n - 1) this->addVertIndex(newShape, start, cur_num, start + 1);
+				cur_num++;
+			}
+			else {
+				this->addVertice(ve);
+				cur_num++;
+			}
+		}
+	}else if(type == )
+	
 	this->shapes.push_back(newShape);
 	analyzeData();
 }
@@ -99,10 +116,6 @@ bool ObjFile::loadFile()
 		std::cout << "File does not exist!" << std::endl;
 		return false;
 	}
-
-	
-	
-
 	std::string base_dir = GetBaseDir(filename);
 	if (base_dir.empty()) {
 		base_dir = ".";
@@ -142,7 +155,7 @@ void ObjFile::analyzeData()
 				if (textures.find(mp->diffuse_texname) == textures.end()) {
 					printf("cwy: texturename %s\n", mp->diffuse_texname.c_str());
 					GLuint texture_id;
-					int w, h;
+					int w,h;
 					int comp;
 
 					std::string texture_filename = mp->diffuse_texname;
@@ -555,6 +568,14 @@ void ObjFile::addVertice(vec3 vetex)
 	this->attrib.vertices.push_back(vetex.v[0]);
 	this->attrib.vertices.push_back(vetex.v[1]);
 	this->attrib.vertices.push_back(vetex.v[2]);
+
+}
+
+void ObjFile::addVertice(float x, float y, float z)
+{
+	this->attrib.vertices.push_back(x);
+	this->attrib.vertices.push_back(y);
+	this->attrib.vertices.push_back(z);
 
 }
 
